@@ -105,6 +105,26 @@ export const getTeamList = async (req, res) => {
   }
 };
 
+export const getUserProfile = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const user = await User.findById(userId).select("-password");
+
+    if (user) {
+      res.status(200).json({
+        status: true,
+        user,
+      });
+    } else {
+      res.status(404).json({ status: false, message: "User not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ status: false, message: error.message });
+  }
+};
+
 export const getNotificationsList = async (req, res) => {
   try {
     const { userId } = req.user;

@@ -6,6 +6,7 @@ import {
   deleteUserProfile,
   getNotificationsList,
   getTeamList,
+  getUserProfile,
   loginUser,
   logoutUser,
   markNotificationRead,
@@ -21,6 +22,7 @@ router.post("/logout", logoutUser);
 
 router.get("/get-team", protectRoute, isAdminRoute, getTeamList);
 router.get("/notifications", protectRoute, getNotificationsList);
+router.get("/profile", protectRoute, getUserProfile);
 
 router.put("/profile", protectRoute, updateUserProfile);
 router.put("/read-noti", protectRoute, markNotificationRead);
