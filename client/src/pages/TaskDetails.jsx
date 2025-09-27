@@ -14,7 +14,7 @@ import {
 import { RxActivityLog } from "react-icons/rx";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { tasks } from "../assets/data";
+import { useGetTaskQuery } from "../redux/slices/apiSlice";
 import Tabs from "../components/Tabs";
 import { PRIOTITYSTYELS, TASK_TYPE, getInitials } from "../utils";
 import Loading from "../components/Loader";
@@ -90,7 +90,24 @@ const TaskDetails = () => {
   const { id } = useParams();
 
   const [selected, setSelected] = useState(0);
-  const task = tasks[3];
+  const { data, isLoading, error } = useGetTaskQuery(id);
+  const task = data?.task;
+
+  if (isLoading) {
+    return (
+      <div className='py-10'>
+        <Loading />
+      </div>
+    );
+  }
+
+  if (error || !task) {
+    return (
+      <div className='w-full h-96 flex items-center justify-center'>
+        <p className='text-gray-500'>Task not found</p>
+      </div>
+    );
+  }
 
   return (
     <div className='w-full flex flex-col gap-3 mb-4 overflow-y-hidden'>

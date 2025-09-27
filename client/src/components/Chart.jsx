@@ -9,9 +9,24 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { chartData } from "../assets/data";
 
-export const Chart = () => {
+export const Chart = ({ data }) => {
+  // Transform dashboard statistics into chart data
+  const chartData = data ? [
+    {
+      name: "To Do",
+      total: data.tasks?.todo || 0,
+    },
+    {
+      name: "In Progress", 
+      total: data.tasks?.["in progress"] || 0,
+    },
+    {
+      name: "Completed",
+      total: data.tasks?.completed || 0,
+    },
+  ] : [];
+
   return (
     <ResponsiveContainer width={"100%"} height={300}>
       <BarChart width={150} height={40} data={chartData}>

@@ -9,11 +9,12 @@ import { LuClipboardEdit } from "react-icons/lu";
 import { FaNewspaper, FaUsers } from "react-icons/fa";
 import { FaArrowsToDot } from "react-icons/fa6";
 import moment from "moment";
-import { summary } from "../assets/data";
+import { useDashboardStatisticsQuery } from "../redux/slices/apiSlice";
 import clsx from "clsx";
 import { Chart } from "../components/Chart";
 import { BGS, PRIOTITYSTYELS, TASK_TYPE, getInitials } from "../utils";
 import UserInfo from "../components/UserInfo";
+import Loading from "../components/Loader";
 
 const TaskTable = ({ tasks }) => {
   const ICONS = {
@@ -146,36 +147,44 @@ const UserTable = ({ users }) => {
   );
 };
 const Dashboard = () => {
-  const totals = summary.tasks;
+  const { data, isLoading, error } = useDashboardStatisticsQuery();
+  
+  if (isLoading) {
+    return (
+      <div className='py-10'>
+        <Loading />
+      </div>
+    );
+  }
 
   const stats = [
     {
       _id: "1",
       label: "TOTAL TASK",
-      total: summary?.totalTasks || 0,
+      total: data?.totalTasks || 0,
       icon: <FaNewspaper />,
       bg: "bg-[#1d4ed8]",
     },
     {
       _id: "2",
       label: "COMPLTED TASK",
-      total: totals["completed"] || 0,
+      total: data?.tasks?.completed || 0,
       icon: <MdAdminPanelSettings />,
       bg: "bg-[#0f766e]",
     },
     {
       _id: "3",
       label: "TASK IN PROGRESS ",
-      total: totals["in progress"] || 0,
+      total: data?.tasks?.["in progress"] || 0,
       icon: <LuClipboardEdit />,
       bg: "bg-[#f59e0b]",
     },
     {
       _id: "4",
       label: "TODOS",
-      total: totals["todo"],
+      total: data?.tasks?.todo || 0,
       icon: <FaArrowsToDot />,
-      bg: "bg-[#be185d]" || 0,
+      bg: "bg-[#be185d]",
     },
   ];
 
@@ -209,19 +218,19 @@ const Dashboard = () => {
 
       <div className='w-full bg-white my-16 p-4 rounded shadow-sm'>
         <h4 className='text-xl text-gray-600 font-semibold'>
-          Chart by Priority
+          Task Overview Chart
         </h4>
-        <Chart />
+        <Chart data={data} />
       </div>
 
       <div className='w-full flex flex-col md:flex-row gap-4 2xl:gap-10 py-8'>
         {/* /left */}
 
-        <TaskTable tasks={summary.last10Task} />
+        <TaskTable tasks={data?.last10Task || []} />
 
         {/* /right */}
 
-        <UserTable users={summary.users} />
+        <UserTable users={data?.users || []} />
       </div>
     </div>
   );

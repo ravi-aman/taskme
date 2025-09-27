@@ -7,12 +7,13 @@ import {
   MdKeyboardDoubleArrowUp,
   MdOutlineRestore,
 } from "react-icons/md";
-import { tasks } from "../assets/data";
+import { useGetTasksQuery } from "../redux/slices/apiSlice";
 import Title from "../components/Title";
 import Button from "../components/Button";
 import { PRIOTITYSTYELS, TASK_TYPE } from "../utils";
 import AddUser from "../components/AddUser";
 import ConfirmatioDialog from "../components/Dialogs";
+import Loading from "../components/Loader";
 
 const ICONS = {
   high: <MdKeyboardDoubleArrowUp />,
@@ -26,6 +27,22 @@ const Trash = () => {
   const [msg, setMsg] = useState(null);
   const [type, setType] = useState("delete");
   const [selected, setSelected] = useState("");
+
+  const { data, isLoading, error } = useGetTasksQuery({
+    strQuery: "",
+    isTrashed: "true", 
+    search: ""
+  });
+
+  const tasks = data?.tasks || [];
+
+  if (isLoading) {
+    return (
+      <div className='py-10'>
+        <Loading />
+      </div>
+    );
+  }
 
   const deleteAllClick = () => {
     setType("deleteAll");

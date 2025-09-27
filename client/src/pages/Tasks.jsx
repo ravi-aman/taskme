@@ -9,7 +9,7 @@ import { IoMdAdd } from "react-icons/io";
 import Tabs from "../components/Tabs";
 import TaskTitle from "../components/TaskTitle";
 import BoardView from "../components/BoardView";
-import { tasks } from "../assets/data";
+import { useGetTasksQuery } from "../redux/slices/apiSlice";
 import Table from "../components/task/Table";
 import AddTask from "../components/task/AddTask";
 
@@ -29,11 +29,18 @@ const Tasks = () => {
 
   const [selected, setSelected] = useState(0);
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const status = params?.status || "";
 
-  return loading ? (
+  const { data, isLoading, error } = useGetTasksQuery({
+    strQuery: status || "",
+    isTrashed: "",
+    search: ""
+  });
+
+  const tasks = data?.tasks || [];
+
+  return isLoading ? (
     <div className='py-10'>
       <Loading />
     </div>

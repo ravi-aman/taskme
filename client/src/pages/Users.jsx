@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import Title from "../components/Title";
 import Button from "../components/Button";
 import { IoMdAdd } from "react-icons/io";
-import { summary } from "../assets/data";
+import { useGetTeamListQuery } from "../redux/slices/apiSlice";
 import { getInitials } from "../utils";
 import clsx from "clsx";
 import ConfirmatioDialog, { UserAction } from "../components/Dialogs";
 import AddUser from "../components/AddUser";
+import Loading from "../components/Loader";
 
 const Users = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
   const [openAction, setOpenAction] = useState(false);
   const [selected, setSelected] = useState(null);
+
+  const { data = [], isLoading, error } = useGetTeamListQuery();
 
   const userActionHandler = () => {};
   const deleteHandler = () => {};
@@ -26,6 +29,14 @@ const Users = () => {
     setSelected(el);
     setOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className='py-10'>
+        <Loading />
+      </div>
+    );
+  }
 
   const TableHeader = () => (
     <thead className='border-b border-gray-300'>
@@ -104,7 +115,7 @@ const Users = () => {
             <table className='w-full mb-5'>
               <TableHeader />
               <tbody>
-                {summary.users?.map((user, index) => (
+                {data?.map((user, index) => (
                   <TableRow key={index} user={user} />
                 ))}
               </tbody>
