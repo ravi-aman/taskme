@@ -7,6 +7,8 @@ import UserList from "./UserList";
 import SelectList from "../SelectList";
 import { BiImages } from "react-icons/bi";
 import Button from "../Button";
+import { useCreateTaskMutation } from "../../redux/slices/apiSlice";
+import { toast } from "sonner";
 
 const LISTS = ["TODO", "IN PROGRESS", "COMPLETED"];
 const PRIORIRY = ["HIGH", "MEDIUM", "NORMAL", "LOW"];
@@ -20,6 +22,7 @@ const AddTask = ({ open, setOpen }) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
   const [team, setTeam] = useState(task?.team || []);
   const [stage, setStage] = useState(task?.stage?.toUpperCase() || LISTS[0]);
@@ -29,7 +32,41 @@ const AddTask = ({ open, setOpen }) => {
   const [assets, setAssets] = useState([]);
   const [uploading, setUploading] = useState(false);
 
-  const submitHandler = () => {};
+  const [createTask, { isLoading }] = useCreateTaskMutation();
+
+  const submitHandler = async (data) => {
+    try {
+      setUploading(true);
+      
+      const newData = {
+        ...data,
+        assets: uploadedFileURLs,
+        team,
+        stage: stage.toLowerCase(),
+        priority: priority.toLowerCase(),
+      };
+
+      const result = await createTask(newData).unwrap();
+      
+      toast.success("Task created successfully!");
+      
+      // Reset form and close modal
+      reset();
+      setTeam([]);
+      setStage(LISTS[0]);
+      setPriority(PRIORIRY[2]);
+      setAssets([]);
+      setTimeout(() => {
+        setOpen(false);
+      }, 500);
+      
+    } catch (error) {
+      console.error("Error creating task:", error);
+      toast.error(error?.data?.message || "Something went wrong!");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSelect = (e) => {
     setAssets(e.target.files);
@@ -110,9 +147,9 @@ const AddTask = ({ open, setOpen }) => {
             </div>
 
             <div className='bg-gray-50 py-6 sm:flex sm:flex-row-reverse gap-4'>
-              {uploading ? (
+              {uploading || isLoading ? (
                 <span className='text-sm py-2 text-red-500'>
-                  Uploading assets
+                  {uploading ? "Uploading assets" : "Creating task..."}
                 </span>
               ) : (
                 <Button
