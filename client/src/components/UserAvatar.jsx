@@ -8,9 +8,11 @@ import { getInitials } from "../utils";
 import { useLogoutUserMutation } from "../redux/slices/apiSlice";
 import { logout } from "../redux/slices/authSlice";
 import { toast } from "sonner";
+import ProfileModal from "./ProfileModal";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const UserAvatar = () => {
-  const [open, setOpen] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
   const [openPassword, setOpenPassword] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -57,7 +59,7 @@ const UserAvatar = () => {
                 <Menu.Item>
                   {({ active }) => (
                     <button
-                      onClick={() => setOpen(true)}
+                      onClick={() => setOpenProfile(true)}
                       className='text-gray-700 group flex w-full items-center rounded-md px-2 py-2 text-base'
                     >
                       <FaUser className='mr-2' aria-hidden='true' />
@@ -94,6 +96,10 @@ const UserAvatar = () => {
           </Transition>
         </Menu>
       </div>
+
+      {/* Modals */}
+      <ProfileModal open={openProfile} setOpen={setOpenProfile} />
+      <ChangePasswordModal open={openPassword} setOpen={setOpenPassword} />
     </>
   );
 };

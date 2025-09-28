@@ -127,6 +127,14 @@ export const apiSlice = createApi({
       providesTags: ["User"],
     }),
 
+    getUserProfile: builder.query({
+      query: () => ({
+        url: "/user/profile",
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
+
     updateUserProfile: builder.mutation({
       query: (data) => ({
         url: "/user/profile",
@@ -185,6 +193,7 @@ export const {
   useRegisterUserMutation,
   useLogoutUserMutation,
   useGetTeamListQuery,
+  useGetUserProfileQuery,
   useUpdateUserProfileMutation,
   useChangeUserPasswordMutation,
   useActivateUserProfileMutation,

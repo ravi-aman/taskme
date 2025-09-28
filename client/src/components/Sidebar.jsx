@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   MdDashboard,
   MdOutlineAddTask,
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { setOpenSidebar } from "../redux/slices/authSlice";
 import clsx from "clsx";
+import SettingsModal from "./SettingsModal";
 
 const linkData = [
   {
@@ -52,6 +53,7 @@ const linkData = [
 
 const Sidebar = () => {
   const { user } = useSelector((state) => state.auth);
+  const [openSettings, setOpenSettings] = useState(false);
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -95,11 +97,17 @@ const Sidebar = () => {
       </div>
 
       <div className=''>
-        <button className='w-full flex gap-2 p-2 items-center text-lg text-gray-800'>
+        <button 
+          onClick={() => setOpenSettings(true)}
+          className='w-full flex gap-2 p-2 items-center text-lg text-gray-800 hover:bg-gray-100 rounded-md transition-colors'
+        >
           <MdSettings />
           <span>Settings</span>
         </button>
       </div>
+
+      {/* Settings Modal */}
+      <SettingsModal open={openSettings} setOpen={setOpenSettings} />
     </div>
   );
 };
